@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NarutoUniverseProject.Data;
+using NarutoUniverseProject.Services;
 
 namespace NarutoUniverseProject
 {
@@ -31,6 +33,10 @@ namespace NarutoUniverseProject
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddSingleton(new ConnectionString(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<PersonService>();
+            services.AddScoped<AbilityService>();
+            services.AddScoped<OtherService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

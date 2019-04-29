@@ -1,0 +1,47 @@
+﻿@model NarutoUniverseProject.Models.AbilityModels.AbilityDetailedViewModel
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+
+<h2 class="text-center">@Model.Name</h2>
+<hr />
+<br />
+<div class="row">
+    <!--info about person-->
+    <div class="col-md-6">
+        <p><span class="font-weight-bold">Id:</span> @Model.Id</p>
+        <p><span class="font-weight-bold">Name:</span> @Model.Name</p>
+        <p><span class="font-weight-bold">Time To Cast:</span> @Model.TimeToCast seconds</p>
+        <p><span class="font-weight-bold">Style:</span> @Model.Style</p>
+        <p><span class="font-weight-bold">Power Source:</span> @Model.PowerSource</p>
+    </div>
+    <!--collection of abilities-->
+    <div class="col-md-6">
+        <p><span class="font-weight-bold">Persons, who have this ability:</span></p>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var person in Model.Persons)
+                        {
+                    <tr>
+                        <td><p class="mt-2">@person.Id</p></td>
+                        <td><p class="mt-2">@person.Name</p></td>
+                        <td><p class="mt-2">@person.Age years old</p></td>
+                        <td><a asp-controller="Person" asp-action="View" asp-route-id="@person.Id" class="btn btn-primary">View</a></td>
+                    </tr>
+                        }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
