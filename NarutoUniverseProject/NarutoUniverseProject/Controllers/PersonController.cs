@@ -20,11 +20,35 @@ namespace NarutoUniverseProject.Controllers
             _personService = personService;
             _otherService = otherService;
         }
+
+        [HttpGet]
         public IActionResult Index()
         {
-            var models = _personService.GetPersons();
-            return View(models);
+            if(ViewData["FilteredModel"] != null)
+            {
+                return View(ViewData["FilteredModel"]);
+            }
+            var model = _personService.GetPersons();
+            model.Styles = _personService.GetItemsForCheckboxes("styles");
+            model.Positions = _personService.GetItemsForCheckboxes("positions");
+            model.Countries = _personService.GetItemsForCheckboxes("countries");
+            model.PowerSources = _personService.GetItemsForCheckboxes("power_sources");
+            return View(model);
         }
+
+        [HttpPost]
+        public IActionResult Index(BoxOfPersonSummaryViewModel bindModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError(string.Empty, "An error occured adding the ability to person");
+                return View(bindModel);
+            }
+
+            _personService.GetFilteredPersons(bindModel);
+            return View(bindModel);
+        }
+
 
         public IActionResult View(Int32 id)
         {
@@ -131,5 +155,20 @@ namespace NarutoUniverseProject.Controllers
             _personService.DeleteAbilityOfPerson(id, personId);
             return RedirectToAction(nameof(View), new { id = personId });
         }
+
+        //[HttpPost]
+        //public IActionResult Filter(BoxOfPersonSummaryViewModel bindModel)
+        //{
+        //    if(!ModelState.IsValid)
+        //    {
+        //        ModelState.AddModelError(string.Empty, "An error occured adding the ability to person");
+        //        return View(bindModel);
+        //    }
+
+        //    _personService.GetFilteredPersons(bindModel);
+        //    ViewData["FilteredModel"] = bindModel;
+        //    Index();
+        //    return View();
+        //}
     }
 }

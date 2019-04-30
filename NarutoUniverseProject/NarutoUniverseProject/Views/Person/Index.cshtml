@@ -1,4 +1,4 @@
-﻿@model ICollection<NarutoUniverseProject.Models.PersonModels.PersonSummaryViewModel>
+﻿@model NarutoUniverseProject.Models.PersonModels.BoxOfPersonSummaryViewModel
 @{
     ViewData["Title"] = "All People";
 }
@@ -6,7 +6,40 @@
 <h2 class="text-center">@ViewData["Title"]</h2>
 <div class="row">
     <div class="col-md-3">
-        
+
+
+        <form asp-controller="Person" asp-action="Filter" method="post" class="form-horizontal">
+
+            <p class="font-weight-bold">Positions:</p>
+            @for (Int32 i = 0; i < Model.Positions.Count; i++)
+            {
+                <p><input asp-for='Positions[i].Value' /> <span>@Model.Positions[i].Key</span></p>
+                <input type="hidden" asp-for="Positions[i].Key" />
+            }
+            <hr />
+            <p class="font-weight-bold">Countries:</p>
+            @for (Int32 i = 0; i < Model.Countries.Count; i++)
+            {
+                <p><input asp-for='Countries[i].Value' /> <span>@Model.Countries[i].Key</span></p>
+                <input type="hidden" asp-for="Countries[i].Key" />
+            }
+            <hr />
+            <p class="font-weight-bold">Styles:</p>
+            @for (Int32 i = 0; i < Model.Styles.Count; i++)
+            {
+                <p><input asp-for='Styles[i].Value' /> <span>@Model.Styles[i].Key</span></p>
+                <input type="hidden" asp-for="Styles[i].Key" />
+            }
+            <hr />
+            <p class="font-weight-bold">Power Sources:</p>
+            @for (Int32 i = 0; i < Model.PowerSources.Count; i++)
+            {
+                <p><input asp-for='PowerSources[i].Value' /> <span>@Model.PowerSources[i].Key</span></p>
+                <input type="hidden" asp-for="PowerSources[i].Key" />
+            }
+            <hr />
+            <button class="btn btn-danger">Filter</button>
+        </form>
     </div>
     <div class="col-md-9">
         <a asp-action="Create" class="btn btn-success">Create new Person</a>
@@ -21,7 +54,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var person in Model)
+                    @foreach (var person in Model.ViewModels)
                     {
                         <tr>
                             <td><p class="mt-2">@person.Id</p></td>

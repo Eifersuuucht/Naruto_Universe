@@ -7,7 +7,9 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using NarutoUniverseProject.Extensions;
 
 namespace NarutoUniverseProject.Services
 {
@@ -20,10 +22,24 @@ namespace NarutoUniverseProject.Services
             _connString = connString;
         }
 
-        public ICollection<PersonSummaryViewModel> GetPersons()
+        private Boolean IsAnyBoolInList(List<Item> list)
+        {
+            foreach(var item in list)
+            {
+                if(item.Value)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public BoxOfPersonSummaryViewModel GetPersons()
         {
             String sql = "SELECT * FROM persons;";
-            ICollection<PersonSummaryViewModel> persons = new List<PersonSummaryViewModel>();
+            //ICollection<PersonSummaryViewModel> persons = new List<PersonSummaryViewModel>();
+            BoxOfPersonSummaryViewModel boxedPersons = new BoxOfPersonSummaryViewModel();
+            boxedPersons.ViewModels = new List<PersonSummaryViewModel>();
             using (SQLiteConnection connection = new SQLiteConnection(_connString.Value))
             {
                 connection.Open();
@@ -36,7 +52,7 @@ namespace NarutoUniverseProject.Services
                 {
                     while(reader.Read())
                     {
-                        persons.Add(new PersonSummaryViewModel
+                        boxedPersons.ViewModels.Add(new PersonSummaryViewModel
                         {
                             Id = reader.GetInt32(0),
                             Name = reader.GetString(1),
@@ -45,7 +61,7 @@ namespace NarutoUniverseProject.Services
                     }
                 }
             }
-            return persons;
+            return boxedPersons;
         }
 
         public PersonDetailedViewModel GetPerson(Int32 id)
@@ -131,6 +147,34 @@ namespace NarutoUniverseProject.Services
 
                 return result;
             }
+        }
+
+        public List<Item> GetItemsForCheckboxes(String table)
+        {
+            String sql = String.Format("SELECT * FROM {0};", table);
+            List<Item> items = new List<Item>();
+
+            using (SQLiteConnection connection = new SQLiteConnection(_connString.Value))
+            {
+                connection.Open();
+
+                SQLiteCommand command = new SQLiteCommand(sql, connection);
+
+                SQLiteDataReader reader = command.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        items.Add(new Item()
+                        {
+                            Key = reader.GetString(1),
+                            Value = false
+                        });   
+                    }
+                }
+            }
+            return items;
         }
 
         public List<SelectListItem> GetSelectListItems(String table)
@@ -285,6 +329,142 @@ namespace NarutoUniverseProject.Services
             }
         }
 
-        public Filter
+        public BoxOfPersonSummaryViewModel GetFilteredPersons(BoxOfPersonSummaryViewModel bindModel)
+        {
+            String sql = "SELECT p.id, p.name, p.age FROM persons p";
+            StringBuilder sqlBuild = new StringBuilder(sql);
+            ICollection<PersonSummaryViewModel> persons = new List<PersonSummaryViewModel>();
+
+            Boolean isInCountries = bindModel.Countries.IsAnyBoolInItemList();
+            Boolean isInPositions = bindModel.Positions.IsAnyBoolInItemList();
+            Boolean isInStyles = bindModel.Styles.IsAnyBoolInItemList();
+            Boolean isInPowerSources = bindModel.PowerSources.IsAnyBoolInItemList();
+            Boolean isFirstAfterWhere = true;
+
+            if (isInCountries)
+            {
+                sqlBuild.Append(" INNER JOIN countries c ON p.country_id = c.id");
+            }
+            if (isInPositions)
+            {
+                sqlBuild.Append(" INNER JOIN positions ps ON p.position_id = ps.id");
+            }
+            if (isInStyles)
+            {
+                sqlBuild.Append(" INNER JOIN person_ability pa ON p.id = pa.person_id INNER JOIN abilities a ON pa.ability_id = a.id INNER JOIN styles s ON a.style_id = s.id");
+            }
+            if (isInPowerSources)
+            {
+                sqlBuild.Append(" INNER JOIN person_ability pa ON p.id = pa.person_id INNER JOIN abilities a ON pa.ability_id = a.id INNER JOIN styles s ON a.style_id = s.id INNER JOIN power_sources pws ON s.power_source_id = pws.id");
+            }
+
+            //if there is at least one true then we will dive into loop
+            if(isInCountries || isInPositions || isInStyles || isInPowerSources)
+            {
+                sqlBuild.Append(" WHERE");
+                if (isInCountries)
+                {
+                    foreach (var item in bindModel.Countries)
+                    {
+                        if (item.Value)
+                        {
+                            if(isFirstAfterWhere)
+                            {
+                                isFirstAfterWhere = false;
+                            }
+                            else
+                            {
+                                sqlBuild.Append(" AND");
+                            }
+                            sqlBuild.AppendFormat(" c.name = '{0}'", item.Key);
+                        }
+                    }
+                }
+                if (isInPositions)
+                {
+                    foreach (var item in bindModel.Positions)
+                    {
+                        if (item.Value)
+                        {
+                            if (isFirstAfterWhere)
+                            {
+                                isFirstAfterWhere = false;
+                            }
+                            else
+                            {
+                                sqlBuild.Append(" AND");
+                            }
+                            sqlBuild.AppendFormat(" ps.name = '{0}'", item.Key);
+                        }
+                    }
+                }
+                if (isInStyles)
+                {
+                    foreach (var item in bindModel.Styles)
+                    {
+                        if (item.Value)
+                        {
+                            if (isFirstAfterWhere)
+                            {
+                                isFirstAfterWhere = false;
+                            }
+                            else
+                            {
+                                sqlBuild.Append(" AND");
+                            }
+                            sqlBuild.AppendFormat(" s.name = '{0}'", item.Key);
+                        }
+                    }
+                }
+                if (isInPowerSources)
+                {
+                    foreach (var item in bindModel.PowerSources)
+                    {
+                        if (item.Value)
+                        {
+                            if (isFirstAfterWhere)
+                            {
+                                isFirstAfterWhere = false;
+                            }
+                            else
+                            {
+                                sqlBuild.Append(" AND");
+                            }
+                            sqlBuild.AppendFormat(" pws.name = '{0}'", item.Key);
+                        }
+                    }
+                }
+
+            }
+
+            sqlBuild.Append(";");
+
+            sql = sqlBuild.ToString();
+
+            using (SQLiteConnection connection = new SQLiteConnection(_connString.Value))
+            {
+                connection.Open();
+
+                SQLiteCommand command = new SQLiteCommand(sql, connection);
+
+                SQLiteDataReader reader = command.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        persons.Add(new PersonSummaryViewModel
+                        {
+                            Id = reader.GetInt32(0),
+                            Name = reader.GetString(1),
+                            Age = reader.GetInt32(2)
+                        });
+                    }
+                }
+            }
+            bindModel.ViewModels = persons;
+            return bindModel;
+
+        }
     }
 }

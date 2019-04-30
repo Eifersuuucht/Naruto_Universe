@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace NarutoUniverseProject.Models.PersonModels
 {
-    public class BoxOfPersonSummaryViewModel
+    public class BoxOfPersonSummaryViewModel : FilterPersonBaseOnSumView
     {
         public ICollection<PersonSummaryViewModel> ViewModels { get; set; }
     }
