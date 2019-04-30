@@ -15,6 +15,12 @@
         <p><span class="font-weight-bold">Time To Cast:</span> @Model.TimeToCast seconds</p>
         <p><span class="font-weight-bold">Style:</span> @Model.Style</p>
         <p><span class="font-weight-bold">Power Source:</span> @Model.PowerSource</p>
+        <form asp-controller="Ability" asp-action="Delete" asp-route-id="@Model.Id">
+            <p>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Update this Ability</a>
+                <button class="btn btn-danger">Delete this Ability</button>
+            </p>
+        </form>
     </div>
     <!--collection of abilities-->
     <div class="col-md-6">

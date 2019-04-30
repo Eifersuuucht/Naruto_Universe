@@ -1,0 +1,36 @@
+﻿@model NarutoUniverseProject.Models.PersonModels.PersonAddAbilityViewModel
+
+@{
+    ViewData["Title"] = "Add new Ability";
+}
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Time To Cast</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ability in Model.AbilitiesForAdding)
+                {
+                <tr>
+                    <td><p class="mt-2">@ability.Id</p></td>
+                    <td><p class="mt-2">@ability.Name</p></td>
+                    <td><p class="mt-2">@ability.TimeToCast sec</p></td>
+                    <td>
+                        <form asp-controller="Person" asp-action="AddAbility" asp-route-id="@Model.Id" asp-route-abilityid="@ability.Id">
+                            <div class="btn-group">
+                                <a asp-controller="Ability" asp-action="View" asp-route-id="@ability.Id" class="btn btn-primary">View</a>
+                                <button class="btn btn-danger">Add</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>

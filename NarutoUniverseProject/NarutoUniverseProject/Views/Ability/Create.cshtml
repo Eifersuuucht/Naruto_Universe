@@ -1,14 +1,14 @@
-﻿@model NarutoUniverseProject.Models.PersonModels.PersonCreateBindModel
+﻿@model NarutoUniverseProject.Models.AbilityModels.AbilityCreateBindModel
 @{
     ViewData["Title"] = "Creating a new person";
 }
 
 <h2 class="text-center">@ViewData["Title"]</h2>
 
-<form asp-controller="Person" asp-action="Create" method="post" class="form-horizontal">
+<form asp-controller="Ability" asp-action="Create" method="post" class="form-horizontal">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <partial name="_EditPersonPartial.cshtml" />
+    <partial name="_EditAbilityPartial.cshtml" />
 
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Create</button>

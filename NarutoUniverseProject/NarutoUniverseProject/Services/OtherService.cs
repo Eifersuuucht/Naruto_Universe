@@ -1,4 +1,5 @@
-﻿using NarutoUniverseProject.Data;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using NarutoUniverseProject.Data;
 using NarutoUniverseProject.Models.OtherModels;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace NarutoUniverseProject.Services
         {
             _connString = connString;
         }
+
 
         public ICollection<Position> GetPositions()
         {

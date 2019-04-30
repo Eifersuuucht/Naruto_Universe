@@ -1,0 +1,32 @@
+﻿@model NarutoUniverseProject.Models.PersonModels.EditPersonBase
+
+<div class="form-group">
+    <label asp-for="Name" class="col-md-2 control-label"></label>
+    <div>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+</div>
+<div class="form-group">
+    <label asp-for="Age" class="col-md-2 control-label"></label>
+    <div>
+        <input asp-for="Age" class="form-control" />
+        <span asp-validation-for="Age" class="text-danger"></span>
+    </div>
+</div>
+
+<!--hier will be two downlists-->
+<div class="form-group">
+    <label asp-for="PositionId" class="col-md-2 control-label"></label>
+    <div>
+        <select class="form-control" asp-for="PositionId" asp-items='@ViewBag.Positions'></select>
+        <span asp-validation-for="PositionId" class="text-danger"></span>
+    </div>
+</div>
+<div class="form-group">
+    <label asp-for="CountryId" class="col-md-2 control-label"></label>
+    <div>
+        <select class="form-control" asp-for="CountryId" asp-items='@ViewBag.Countries'></select>
+        <span asp-validation-for="CountryId" class="text-danger"></span>
+    </div>
+</div>

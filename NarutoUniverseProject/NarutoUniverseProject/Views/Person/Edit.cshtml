@@ -1,0 +1,23 @@
+﻿@model NarutoUniverseProject.Models.PersonModels.PersonUpdateBindModel
+
+@{
+    ViewData["Title"] = "Updating " + Model.Name;
+}
+
+<h2 class="text-center">@ViewData["Title"]</h2>
+
+<form asp-controller="Person" asp-action="Edit" method="post" class="form-horizontal">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <partial name="_EditPersonPartial.cshtml" />
+
+    <div class="form-group">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-primary">Update</button>
+    </div>
+
+</form>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

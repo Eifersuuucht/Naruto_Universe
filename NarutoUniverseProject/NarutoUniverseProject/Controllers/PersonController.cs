@@ -40,16 +40,16 @@ namespace NarutoUniverseProject.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            ViewData["Positions"] = _otherService.GetPositions();
-            ViewData["Countries"] = _otherService.GetCountries();
+            ViewBag.Positions = _personService.GetSelectListItems("positions");
+            ViewBag.Countries = _personService.GetSelectListItems("countries");
             return View(new PersonCreateBindModel());
         }
 
         [HttpPost]
         public IActionResult Create(PersonCreateBindModel bindModel)
         {
-            ViewData["Positions"] = _otherService.GetPositions();
-            ViewData["Countries"] = _otherService.GetCountries();
+            ViewBag.Positions = _personService.GetSelectListItems("positions");
+            ViewBag.Countries = _personService.GetSelectListItems("countries");
 
             if (!ModelState.IsValid)
             {
@@ -64,6 +64,72 @@ namespace NarutoUniverseProject.Controllers
                 return View(bindModel);
             }
             return RedirectToAction(nameof(View), new { id = id });
+        }
+
+        [HttpGet]
+        public IActionResult Edit(Int32 id)
+        {
+            ViewBag.Positions = _personService.GetSelectListItems("positions");
+            ViewBag.Countries = _personService.GetSelectListItems("countries");
+
+            var model = _personService.GetPersonForUpdate(id);
+            if(model == null)
+            {
+                return NotFound();
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(PersonUpdateBindModel bindModel)
+        {
+            ViewBag.Positions = _personService.GetSelectListItems("positions");
+            ViewBag.Countries = _personService.GetSelectListItems("countries");
+
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError(string.Empty, "An error occured saving the person");
+                return View(bindModel);
+            }
+
+            _personService.UpdatePerson(bindModel);
+            
+            return RedirectToAction(nameof(View), new { id = bindModel.Id });
+        }
+
+        [HttpPost]
+        public IActionResult Delete(Int32 id)
+        {
+            _personService.DeletePerson(id);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public IActionResult AddAbility(Int32 id)
+        {
+            var model = _personService.GetAbilitiesForAdding(id);
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult AddAbility(PersonAddAbilityBindModel bindModel)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError(string.Empty, "An error occured adding the ability to person");
+                return View(bindModel);
+            }
+            _personService.AddAbility(bindModel);
+            return RedirectToAction(nameof(View), new { id = bindModel.Id });
+        }
+
+        [HttpPost]
+        public IActionResult DeleteAbility(Int32 id, Int32 personId)
+        {
+            _personService.DeleteAbilityOfPerson(id, personId);
+            return RedirectToAction(nameof(View), new { id = personId });
         }
     }
 }

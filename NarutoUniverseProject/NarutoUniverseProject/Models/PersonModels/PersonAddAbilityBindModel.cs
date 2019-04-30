@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace NarutoUniverseProject.Models.PersonModels
 {
-    public class PersonSummaryViewModel : FilterPersonBaseOnSumView
+    public class PersonAddAbilityBindModel
     {
         public Int32 Id { get; set; }
-        public String Name { get; set; }
-        public Int32 Age { get; set; }
+        public Int32 AbilityId { get; set; }
     }
 }

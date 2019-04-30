@@ -15,9 +15,16 @@
         <p><span class="font-weight-bold">Age:</span> @Model.Age years old</p>
         <p><span class="font-weight-bold">Position:</span> @Model.Position</p>
         <p><span class="font-weight-bold">Country:</span> @Model.Country</p>
+        <form asp-controller="Person" asp-action="Delete" asp-route-id="@Model.Id">
+            <p>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Update this Person</a>
+                <button class="btn btn-danger">Delete this Person</button>
+            </p>
+        </form>
     </div>
     <!--collection of abilities-->
     <div class="col-md-6">
+        <a asp-action="AddAbility" asp-route-id="@Model.Id" class="btn btn-primary">Add new Ability</a>
         <p><span class="font-weight-bold">Abilities:</span></p>
         <div class="table-responsive">
             <table class="table table-striped">
@@ -36,7 +43,14 @@
                             <td><p class="mt-2">@ability.Id</p></td>
                             <td><p class="mt-2">@ability.Name</p></td>
                             <td><p class="mt-2">@ability.TimeToCast sec</p></td>
-                            <td><a asp-controller="Ability" asp-action="View" asp-route-id="@ability.Id" class="btn btn-primary">View</a></td>
+                            <td>
+                                <form asp-controller="Person" asp-action="DeleteAbility" asp-route-id="@ability.Id" asp-route-personid="@Model.Id">
+                                    <div class="btn-group">
+                                        <a asp-controller="Ability" asp-action="View" asp-route-id="@ability.Id" class="btn btn-primary">View</a>
+                                        <button class="btn btn-danger">Delete</button>
+                                    </div>
+                                </form>
+                            </td>
                         </tr>
                     }
                 </tbody>
