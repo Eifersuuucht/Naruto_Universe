@@ -1,0 +1,94 @@
+﻿@model NarutoUniverseProject.Models.OtherModels.OtherViewModel
+
+@{
+    ViewData["Title"] = "All other tables";
+}
+
+<h1 class="text-center">@ViewData["Title"]</h1>
+
+<h3>All positions:</h3>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var position in Model.Positions)
+            {
+                <tr>
+                    <td><p class="mt-2">@position.Id</p></td>
+                    <td><p class="mt-2">@position.Name</p></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<br />
+<h3>All countries:</h3>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var country in Model.Countries)
+            {
+                <tr>
+                    <td><p class="mt-2">@country.Id</p></td>
+                    <td><p class="mt-2">@country.Name</p></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<br />
+
+<h3>All styles:</h3>
+<div class="table-responsive">
+    <table class="table table-striped table-">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Power Source</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var style in Model.Styles)
+            {
+                <tr>
+                    <td><p class="mt-2">@style.Id</p></td>
+                    <td><p class="mt-2">@style.Name</p></td>
+                    <td><p class="mt-2">@style.PowerSource</p></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<br />
+<h3>All power sources:</h3>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var powerSource in Model.PowerSources)
+            {
+                <tr>
+                    <td><p class="mt-2">@powerSource.Id</p></td>
+                    <td><p class="mt-2">@powerSource.Name</p></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

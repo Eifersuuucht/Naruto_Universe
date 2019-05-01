@@ -18,11 +18,15 @@ namespace NarutoUniverseProject.Services
             _connString = connString;
         }
 
-
-        public ICollection<Position> GetPositions()
+        public OtherViewModel GetOtherTables()
         {
-            String sql = "SELECT * FROM positions;";
-            ICollection<Position> positions = new List<Position>();
+            String sql = "SELECT s.id, s.name, pws.name FROM styles s INNER JOIN power_sources pws ON s.power_source_id = pws.id;";
+            OtherViewModel viewModel = new OtherViewModel();
+            viewModel.Countries = GetListOfItems("countries");
+            viewModel.PowerSources = GetListOfItems("power_sources");
+            viewModel.Positions = GetListOfItems("positions");
+            viewModel.Styles = new List<Style>();
+
             using (SQLiteConnection connection = new SQLiteConnection(_connString.Value))
             {
                 connection.Open();
@@ -35,21 +39,22 @@ namespace NarutoUniverseProject.Services
                 {
                     while (reader.Read())
                     {
-                        positions.Add(new Position
+                        viewModel.Styles.Add(new Style
                         {
                             Id = reader.GetInt32(0),
                             Name = reader.GetString(1),
+                            PowerSource = reader.GetString(2)
                         });
                     }
                 }
             }
-            return positions;
+            return viewModel;
         }
 
-        public ICollection<Country> GetCountries()
+        public List<Other> GetListOfItems(String table)
         {
-            String sql = "SELECT * FROM countries;";
-            ICollection<Country> countries = new List<Country>();
+            String sql = String.Format("SELECT * FROM {0};", table);
+            List<Other> items = new List<Other>();
             using (SQLiteConnection connection = new SQLiteConnection(_connString.Value))
             {
                 connection.Open();
@@ -62,7 +67,7 @@ namespace NarutoUniverseProject.Services
                 {
                     while (reader.Read())
                     {
-                        countries.Add(new Country
+                        items.Add(new Other
                         {
                             Id = reader.GetInt32(0),
                             Name = reader.GetString(1),
@@ -70,7 +75,8 @@ namespace NarutoUniverseProject.Services
                     }
                 }
             }
-            return countries;
+            return items;
         }
+
     }
 }

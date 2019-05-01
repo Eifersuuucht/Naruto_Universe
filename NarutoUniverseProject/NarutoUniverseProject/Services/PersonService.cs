@@ -38,8 +38,8 @@ namespace NarutoUniverseProject.Services
         {
             String sql = "SELECT * FROM persons;";
             //ICollection<PersonSummaryViewModel> persons = new List<PersonSummaryViewModel>();
-            BoxOfPersonSummaryViewModel boxedPersons = new BoxOfPersonSummaryViewModel();
-            boxedPersons.ViewModels = new List<PersonSummaryViewModel>();
+            BoxOfPersonSummaryViewModel boxOfPersons = new BoxOfPersonSummaryViewModel();
+            boxOfPersons.ViewModels = new List<PersonSummaryViewModel>();
             using (SQLiteConnection connection = new SQLiteConnection(_connString.Value))
             {
                 connection.Open();
@@ -52,7 +52,7 @@ namespace NarutoUniverseProject.Services
                 {
                     while(reader.Read())
                     {
-                        boxedPersons.ViewModels.Add(new PersonSummaryViewModel
+                        boxOfPersons.ViewModels.Add(new PersonSummaryViewModel
                         {
                             Id = reader.GetInt32(0),
                             Name = reader.GetString(1),
@@ -61,8 +61,10 @@ namespace NarutoUniverseProject.Services
                     }
                 }
             }
-            return boxedPersons;
+            return boxOfPersons;
         }
+
+
 
         public PersonDetailedViewModel GetPerson(Int32 id)
         {
@@ -112,6 +114,22 @@ namespace NarutoUniverseProject.Services
                 }
             }
             return person;
+        }
+
+        public Int32 GetScalarAge(String scalar)
+        {
+            String sql = String.Format("SELECT {0}(age) FROM persons;", scalar);
+
+            using (SQLiteConnection connection = new SQLiteConnection(_connString.Value))
+            {
+                connection.Open();
+
+                SQLiteCommand command = new SQLiteCommand(sql, connection);
+
+                object result = command.ExecuteScalar();
+
+                return (Int32)(Int64)result;
+            }
         }
 
 
@@ -175,6 +193,27 @@ namespace NarutoUniverseProject.Services
                 }
             }
             return items;
+        }
+
+        public List<SelectListItem> GetInfoForSort()
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+            list.Add(new SelectListItem
+            {
+                Value = "p.id",
+                Text = "Id"
+            });
+            list.Add(new SelectListItem
+            {
+                Value = "p.name",
+                Text = "Name"
+            });
+            list.Add(new SelectListItem
+            {
+                Value = "p.age",
+                Text = "Age"
+            });
+            return list;
         }
 
         public List<SelectListItem> GetSelectListItems(String table)
@@ -329,7 +368,7 @@ namespace NarutoUniverseProject.Services
             }
         }
 
-        public BoxOfPersonSummaryViewModel GetFilteredPersons(BoxOfPersonSummaryViewModel bindModel)
+        public void GetFilteredPersons(BoxOfPersonSummaryViewModel bindModel)
         {
             String sql = "SELECT p.id, p.name, p.age FROM persons p";
             StringBuilder sqlBuild = new StringBuilder(sql);
@@ -339,7 +378,7 @@ namespace NarutoUniverseProject.Services
             Boolean isInPositions = bindModel.Positions.IsAnyBoolInItemList();
             Boolean isInStyles = bindModel.Styles.IsAnyBoolInItemList();
             Boolean isInPowerSources = bindModel.PowerSources.IsAnyBoolInItemList();
-            Boolean isFirstAfterWhere = true;
+            Boolean isFirstFromOneTable = true;
 
             if (isInCountries)
             {
@@ -353,32 +392,40 @@ namespace NarutoUniverseProject.Services
             {
                 sqlBuild.Append(" INNER JOIN person_ability pa ON p.id = pa.person_id INNER JOIN abilities a ON pa.ability_id = a.id INNER JOIN styles s ON a.style_id = s.id");
             }
-            if (isInPowerSources)
+            if (isInPowerSources && isInStyles)
+            {
+                sqlBuild.Append(" INNER JOIN power_sources pws ON s.power_source_id = pws.id");
+            }
+            else if(isInPowerSources && !isInStyles)
             {
                 sqlBuild.Append(" INNER JOIN person_ability pa ON p.id = pa.person_id INNER JOIN abilities a ON pa.ability_id = a.id INNER JOIN styles s ON a.style_id = s.id INNER JOIN power_sources pws ON s.power_source_id = pws.id");
             }
 
+            sqlBuild.AppendFormat(" WHERE (p.name like '%{0}%' AND p.age >= {1} AND p.age <= {2}", 
+                bindModel.Name, bindModel.MinAge, bindModel.MaxAge);
+
             //if there is at least one true then we will dive into loop
             if(isInCountries || isInPositions || isInStyles || isInPowerSources)
             {
-                sqlBuild.Append(" WHERE");
                 if (isInCountries)
                 {
                     foreach (var item in bindModel.Countries)
                     {
                         if (item.Value)
                         {
-                            if(isFirstAfterWhere)
+                            if(isFirstFromOneTable)
                             {
-                                isFirstAfterWhere = false;
+                                sqlBuild.Append(") AND(");
+                                isFirstFromOneTable = false;
                             }
                             else
                             {
-                                sqlBuild.Append(" AND");
+                                sqlBuild.Append(" OR");
                             }
                             sqlBuild.AppendFormat(" c.name = '{0}'", item.Key);
                         }
                     }
+                    isFirstFromOneTable = true;
                 }
                 if (isInPositions)
                 {
@@ -386,17 +433,19 @@ namespace NarutoUniverseProject.Services
                     {
                         if (item.Value)
                         {
-                            if (isFirstAfterWhere)
+                            if (isFirstFromOneTable)
                             {
-                                isFirstAfterWhere = false;
+                                sqlBuild.Append(") AND(");
+                                isFirstFromOneTable = false;
                             }
                             else
                             {
-                                sqlBuild.Append(" AND");
+                                sqlBuild.Append(" OR");
                             }
                             sqlBuild.AppendFormat(" ps.name = '{0}'", item.Key);
                         }
                     }
+                    isFirstFromOneTable = true;
                 }
                 if (isInStyles)
                 {
@@ -404,17 +453,19 @@ namespace NarutoUniverseProject.Services
                     {
                         if (item.Value)
                         {
-                            if (isFirstAfterWhere)
+                            if (isFirstFromOneTable)
                             {
-                                isFirstAfterWhere = false;
+                                sqlBuild.Append(") AND(");
+                                isFirstFromOneTable = false;
                             }
                             else
                             {
-                                sqlBuild.Append(" AND");
+                                sqlBuild.Append(" OR");
                             }
                             sqlBuild.AppendFormat(" s.name = '{0}'", item.Key);
                         }
                     }
+                    isFirstFromOneTable = true;
                 }
                 if (isInPowerSources)
                 {
@@ -422,20 +473,34 @@ namespace NarutoUniverseProject.Services
                     {
                         if (item.Value)
                         {
-                            if (isFirstAfterWhere)
+                            if (isFirstFromOneTable)
                             {
-                                isFirstAfterWhere = false;
+                                sqlBuild.Append(") AND(");
+                                isFirstFromOneTable = false;
                             }
                             else
                             {
-                                sqlBuild.Append(" AND");
+                                sqlBuild.Append(" OR");
                             }
                             sqlBuild.AppendFormat(" pws.name = '{0}'", item.Key);
                         }
                     }
                 }
+                isFirstFromOneTable = true;
+            }
+
+            sqlBuild.Append(")");
+
+
+            sqlBuild.AppendFormat(" ORDER BY {0}", bindModel.Sorting);
+
+            if(bindModel.Descending)
+            {
+                sqlBuild.Append(" DESC");
 
             }
+
+
 
             sqlBuild.Append(";");
 
@@ -463,7 +528,6 @@ namespace NarutoUniverseProject.Services
                 }
             }
             bindModel.ViewModels = persons;
-            return bindModel;
 
         }
     }

@@ -1,33 +1,110 @@
-﻿@model ICollection<NarutoUniverseProject.Models.AbilityModels.AbilitySummaryViewModel>
+﻿@model NarutoUniverseProject.Models.AbilityModels.BoxOfAbilitySummaryViewModel
 @{
     ViewData["Title"] = "All Abilities";
 }
 
 <h2 class="text-center">@ViewData["Title"]</h2>
 
-<div class="table-responsive">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Time To Cast</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var ability in Model)
+<div class="row">
+    <div class="col-md-3">
+        
+        <form asp-controller="Ability" asp-action="Index" method="post" class="form-horizontal">
+
+
+            <h3>Sort by:</h3>
+            <div class="form-group">
+                <div>
+                    <select class="form-control" asp-for="Sorting" asp-items='@ViewBag.SortingOptions'></select>
+                    <span asp-validation-for="Sorting" class="text-danger"></span>
+                </div>
+            </div>
+            <p><input asp-for='Descending' /> <span>Descending</span></p>
+
+            <button class="btn btn-primary">Sort</button>
+            <hr />
+            <h3>Filters</h3>
+            <div class="form-group">
+                <label asp-for="Name" class="col-md-2 control-label"></label>
+                <div>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="MinTimeToCast" class="col-md-2 control-label"></label>
+                <div>
+                    <input asp-for="MinTimeToCast" class="form-control" />
+                    <span asp-validation-for="MinTimeToCast" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="MaxTimeToCast" class="col-md-2 control-label"></label>
+                <div>
+                    <input asp-for="MaxTimeToCast" class="form-control" />
+                    <span asp-validation-for="MaxTimeToCast" class="text-danger"></span>
+                </div>
+            </div>
+
+            <p class="font-weight-bold">Styles:</p>
+            @for (Int32 i = 0; i < Model.Styles.Count; i++)
             {
-            <tr>
-                <td><p class="mt-2">@ability.Id</p></td>
-                <td><p class="mt-2">@ability.Name</p></td>
-                <td><p class="mt-2">@ability.TimeToCast sec</p></td>
-                <td><a asp-action="View" asp-route-id="@ability.Id" class="btn btn-primary">View</a></td>
-            </tr>
+                <p><input asp-for='Styles[i].Value' /> <span>@Model.Styles[i].Key</span></p>
+                <input type="hidden" asp-for="Styles[i].Key" />
             }
-        </tbody>
-    </table>
-</div>
-<a asp-action="Create" class="btn btn-success">Create new Ability</a>
+            <hr />
+            <p class="font-weight-bold">Power Sources:</p>
+            @for (Int32 i = 0; i < Model.PowerSources.Count; i++)
+            {
+                <p><input asp-for='PowerSources[i].Value' /> <span>@Model.PowerSources[i].Key</span></p>
+                <input type="hidden" asp-for="PowerSources[i].Key" />
+            }
+            <hr />
+
+            <p class="font-weight-bold">Positions:</p>
+            @for (Int32 i = 0; i < Model.Positions.Count; i++)
+            {
+                <p><input asp-for='Positions[i].Value' /> <span>@Model.Positions[i].Key</span></p>
+                <input type="hidden" asp-for="Positions[i].Key" />
+            }
+            <hr />
+            <p class="font-weight-bold">Countries:</p>
+            @for (Int32 i = 0; i < Model.Countries.Count; i++)
+            {
+                <p><input asp-for='Countries[i].Value' /> <span>@Model.Countries[i].Key</span></p>
+                <input type="hidden" asp-for="Countries[i].Key" />
+            }
+            <hr />
+            <button class="btn btn-danger">Filter</button>
+        </form>
+    </div>
+    <div class="col-md-9">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Time To Cast</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ability in Model.ViewModels)
+                    {
+                        <tr>
+                            <td><p class="mt-2">@ability.Id</p></td>
+                            <td><p class="mt-2">@ability.Name</p></td>
+                            <td><p class="mt-2">@ability.TimeToCast sec</p></td>
+                            <td><a asp-action="View" asp-route-id="@ability.Id" class="btn btn-primary">View</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+        
 
 

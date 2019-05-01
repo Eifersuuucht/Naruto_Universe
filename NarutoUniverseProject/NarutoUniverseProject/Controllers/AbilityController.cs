@@ -19,10 +19,32 @@ namespace NarutoUniverseProject.Controllers
             _personService = personService;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             var model = _abilityService.GetAbilities();
+            model.Styles = _personService.GetItemsForCheckboxes("styles");
+            model.Positions = _personService.GetItemsForCheckboxes("positions");
+            model.Countries = _personService.GetItemsForCheckboxes("countries");
+            model.PowerSources = _personService.GetItemsForCheckboxes("power_sources");
+            ViewBag.SortingOptions = _abilityService.GetInfoForSort();
+            model.MinTimeToCast = _abilityService.GetScalarTimeToCast("MIN");
+            model.MaxTimeToCast = _abilityService.GetScalarTimeToCast("MAX");
             return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Index(BoxOfAbilitySummaryViewModel bindModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError(string.Empty, "An error occured adding the ability to person");
+                return View(bindModel);
+            }
+
+            ViewBag.SortingOptions = _abilityService.GetInfoForSort();
+            _abilityService.GetFilteredAbilities(bindModel);
+            return View(bindModel);
         }
 
         public IActionResult View(Int32 id)

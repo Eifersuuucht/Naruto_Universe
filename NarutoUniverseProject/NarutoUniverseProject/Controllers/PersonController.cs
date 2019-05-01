@@ -24,15 +24,14 @@ namespace NarutoUniverseProject.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            if(ViewData["FilteredModel"] != null)
-            {
-                return View(ViewData["FilteredModel"]);
-            }
             var model = _personService.GetPersons();
             model.Styles = _personService.GetItemsForCheckboxes("styles");
             model.Positions = _personService.GetItemsForCheckboxes("positions");
             model.Countries = _personService.GetItemsForCheckboxes("countries");
             model.PowerSources = _personService.GetItemsForCheckboxes("power_sources");
+            ViewBag.SortingOptions = _personService.GetInfoForSort();
+            model.MinAge = _personService.GetScalarAge("MIN");
+            model.MaxAge = _personService.GetScalarAge("MAX");
             return View(model);
         }
 
@@ -44,7 +43,7 @@ namespace NarutoUniverseProject.Controllers
                 ModelState.AddModelError(string.Empty, "An error occured adding the ability to person");
                 return View(bindModel);
             }
-
+            ViewBag.SortingOptions = _personService.GetInfoForSort();
             _personService.GetFilteredPersons(bindModel);
             return View(bindModel);
         }
