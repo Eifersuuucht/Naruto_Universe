@@ -1,4 +1,5 @@
-﻿@model NarutoUniverseProject.Models.PersonModels.BoxOfPersonSummaryViewModel
+﻿
+@model NarutoUniverseProject.Models.PersonModels.BoxOfPersonSummaryViewModel
 @{
     ViewData["Title"] = "All People";
 }
@@ -6,76 +7,86 @@
 <h2 class="text-center">@ViewData["Title"]</h2>
 <div class="row">
     <div class="col-md-3">
-
-        
         <form asp-controller="Person" asp-action="Index" method="post" class="form-horizontal">
-
-            <h3>Sort by:</h3>
-            <div class="form-group">
-                <div>
-                    <select class="form-control" asp-for="Sorting" asp-items='@ViewBag.SortingOptions'></select>
-                    <span asp-validation-for="Sorting" class="text-danger"></span>
+            <div class="sorting">
+                <h3>Sort by:</h3>
+                <div class="form-group">
+                    <div>
+                        <select class="form-control" asp-for="Sorting" asp-items='@ViewBag.SortingOptions'></select>
+                        <span asp-validation-for="Sorting" class="text-danger"></span>
+                    </div>
                 </div>
+                <p><input asp-for='Descending' /> <span>Descending</span></p>
+                <button class="btn btn-primary w-100">Sort</button>
             </div>
-            <p><input asp-for='Descending' /> <span>Descending</span></p>
-
-            <button class="btn btn-primary">Sort</button>
-            <hr />
-            <h3>Filters</h3>
-            <div class="form-group">
-                <label asp-for="Name" class="col-md-2 control-label"></label>
-                <div>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
+            <div class="filtering">
+                <button class="btn btn-primary w-100">Filter</button>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <div>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label asp-for="MinAge" class="col-md-2 control-label"></label>
-                <div>
-                    <input asp-for="MinAge" class="form-control" />
-                    <span asp-validation-for="MinAge" class="text-danger"></span>
+                <div class="form-group">
+                    <label asp-for="MinAge" class="control-label"></label>
+                    <div>
+                        <input asp-for="MinAge" class="form-control" />
+                        <span asp-validation-for="MinAge" class="text-danger"></span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label asp-for="MaxAge" class="col-md-2 control-label"></label>
-                <div>
-                    <input asp-for="MaxAge" class="form-control" />
-                    <span asp-validation-for="MaxAge" class="text-danger"></span>
+                <div class="form-group">
+                    <label asp-for="MaxAge" class="control-label"></label>
+                    <div>
+                        <input asp-for="MaxAge" class="form-control" />
+                        <span asp-validation-for="MaxAge" class="text-danger"></span>
+                    </div>
                 </div>
-            </div>
 
-            <p class="font-weight-bold">Positions:</p>
-            @for (Int32 i = 0; i < Model.Positions.Count; i++)
-            {
-                <p><input asp-for='Positions[i].Value' /> <span>@Model.Positions[i].Key</span></p>
-                <input type="hidden" asp-for="Positions[i].Key" />
-            }
-            <hr />
-            <p class="font-weight-bold">Countries:</p>
-            @for (Int32 i = 0; i < Model.Countries.Count; i++)
-            {
-                <p><input asp-for='Countries[i].Value' /> <span>@Model.Countries[i].Key</span></p>
-                <input type="hidden" asp-for="Countries[i].Key" />
-            }
-            <hr />
-            <p class="font-weight-bold">Styles:</p>
-            @for (Int32 i = 0; i < Model.Styles.Count; i++)
-            {
-                <p><input asp-for='Styles[i].Value' /> <span>@Model.Styles[i].Key</span></p>
-                <input type="hidden" asp-for="Styles[i].Key" />
-            }
-            <hr />
-            <p class="font-weight-bold">Power Sources:</p>
-            @for (Int32 i = 0; i < Model.PowerSources.Count; i++)
-            {
-                <p><input asp-for='PowerSources[i].Value' /> <span>@Model.PowerSources[i].Key</span></p>
-                <input type="hidden" asp-for="PowerSources[i].Key" />
-            }
-            <hr />
-            <button class="btn btn-primary">Filter</button>
-        </form>
+                <button type="button" class="btn btn-success w-100" id="posButton"><span class="float-left">Positions</span> <span class="fa fa-chevron-down float-right mt-1"></span></button>
+                <br />
+                <div id="posBlock">
+                    @for (Int32 i = 0; i < Model.Positions.Count; i++)
+                    {
+                        <p><input asp-for='Positions[i].Value' /> <span>@Model.Positions[i].Key</span></p>
+                        <input type="hidden" asp-for="Positions[i].Key" />
+                    }
+                </div>
+                <br />
+                <button type="button" class="btn btn-success w-100" id="counButton"><span class="float-left">Countries</span> <span class="fa fa-chevron-down float-right mt-1"></span></button>
+                <br />
+                <div id="counBlock">
+                    @for (Int32 i = 0; i < Model.Countries.Count; i++)
+                    {
+                        <p><input asp-for='Countries[i].Value' /> <span>@Model.Countries[i].Key</span></p>
+                        <input type="hidden" asp-for="Countries[i].Key" />
+                    }
+                </div>
+                <br />
+                <button type="button" class="btn btn-success w-100" id="styButton"><span class="float-left">Styles</span> <span class="fa fa-chevron-down float-right mt-1"></span></button>
+                <br />
+                <div id="styBlock">
+                    @for (Int32 i = 0; i < Model.Styles.Count; i++)
+                    {
+                        <p><input asp-for='Styles[i].Value' /> <span>@Model.Styles[i].Key</span></p>
+                        <input type="hidden" asp-for="Styles[i].Key" />
+                    }
+                </div>
+                <br />
+                <button type="button" class="btn btn-success w-100" id="pwsButton"><span class="float-left">Power Sources</span> <span class="fa fa-chevron-down float-right mt-1"></span></button>
+                <br />
+                <div id="pwsBlock">
+                    @for (Int32 i = 0; i < Model.PowerSources.Count; i++)
+                    {
+                        <p><input asp-for='PowerSources[i].Value' /> <span>@Model.PowerSources[i].Key</span></p>
+                        <input type="hidden" asp-for="PowerSources[i].Key" />
+                    }
+                </div>
+                <br />
+            </div>
+</form>
     </div>
     <div class="col-md-9">
         <div class="table-responsive">
@@ -104,6 +115,30 @@
     </div>
 </div>
 
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+        $(document).ready(function () {
+            $("#posBlock").hide();
+            $("#counBlock").hide();
+            $("#styBlock").hide();
+            $("#pwsBlock").hide();
 
+            $("#posButton").click(function () {
+                $("#posBlock").slideToggle();
+            });
+            $("#counButton").click(function () {
+                $("#counBlock").slideToggle();
+            });
+            $("#styButton").click(function () {
+                $("#styBlock").slideToggle();
+            });
+            $("#pwsButton").click(function () {
+                $("#pwsBlock").slideToggle();
+            });
+
+        });
+    </script>
+}
 
 

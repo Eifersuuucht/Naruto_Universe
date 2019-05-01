@@ -9,23 +9,25 @@
 <br />
 <div class="row">
     <!--info about person-->
-    <div class="col-md-6">
-        <p><span class="font-weight-bold">Id:</span> @Model.Id</p>
-        <p><span class="font-weight-bold">Name:</span> @Model.Name</p>
-        <p><span class="font-weight-bold">Age:</span> @Model.Age years old</p>
-        <p><span class="font-weight-bold">Position:</span> @Model.Position</p>
-        <p><span class="font-weight-bold">Country:</span> @Model.Country</p>
-        <form asp-controller="Person" asp-action="Delete" asp-route-id="@Model.Id">
-            <p>
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Update this Person</a>
-                <button class="btn btn-danger">Delete this Person</button>
-            </p>
-        </form>
+    <div class="col-md-5">
+        <div class="info">
+            <h4 class="text-center">Info about @Model.Name</h4>
+            <p><span class="font-weight-bold">Id:</span> @Model.Id</p>
+            <p><span class="font-weight-bold">Name:</span> @Model.Name</p>
+            <p><span class="font-weight-bold">Age:</span> @Model.Age years old</p>
+            <p><span class="font-weight-bold">Position:</span> @Model.Position</p>
+            <p><span class="font-weight-bold">Country:</span> @Model.Country</p>
+            <form asp-controller="Person" asp-action="Delete" asp-route-id="@Model.Id">
+                <p>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Update this Person</a>
+                    <button class="btn btn-danger">Delete this Person</button>
+                </p>
+            </form>
+        </div>
     </div>
     <!--collection of abilities-->
-    <div class="col-md-6">
-        <a asp-action="AddAbility" asp-route-id="@Model.Id" class="btn btn-primary">Add new Ability</a>
-        <p><span class="font-weight-bold">Abilities:</span></p>
+    <div class="col-md-7">
+        <p><span class="font-weight-bold">Abilities:</span><a asp-action="AddAbility" asp-route-id="@Model.Id" class="btn btn-primary float-right mb-1">Add new Ability</a></p>
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>

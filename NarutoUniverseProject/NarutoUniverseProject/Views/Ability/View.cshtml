@@ -9,21 +9,24 @@
 <br />
 <div class="row">
     <!--info about person-->
-    <div class="col-md-6">
-        <p><span class="font-weight-bold">Id:</span> @Model.Id</p>
-        <p><span class="font-weight-bold">Name:</span> @Model.Name</p>
-        <p><span class="font-weight-bold">Time To Cast:</span> @Model.TimeToCast seconds</p>
-        <p><span class="font-weight-bold">Style:</span> @Model.Style</p>
-        <p><span class="font-weight-bold">Power Source:</span> @Model.PowerSource</p>
-        <form asp-controller="Ability" asp-action="Delete" asp-route-id="@Model.Id">
-            <p>
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Update this Ability</a>
-                <button class="btn btn-danger">Delete this Ability</button>
-            </p>
-        </form>
+    <div class="col-md-5">
+        <div class="info">
+            <h4 class="text-center">Info about @Model.Name</h4>
+            <p><span class="font-weight-bold">Id:</span> @Model.Id</p>
+            <p><span class="font-weight-bold">Name:</span> @Model.Name</p>
+            <p><span class="font-weight-bold">Time To Cast:</span> @Model.TimeToCast seconds</p>
+            <p><span class="font-weight-bold">Style:</span> @Model.Style</p>
+            <p><span class="font-weight-bold">Power Source:</span> @Model.PowerSource</p>
+            <form asp-controller="Ability" asp-action="Delete" asp-route-id="@Model.Id">
+                <p>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Update this Ability</a>
+                    <button class="btn btn-danger">Delete this Ability</button>
+                </p>
+            </form>
+        </div>
     </div>
-    <!--collection of abilities-->
-    <div class="col-md-6">
+    <!--collection of persons-->
+    <div class="col-md-7">
         <p><span class="font-weight-bold">Persons, who have this ability:</span></p>
         <div class="table-responsive">
             <table class="table table-striped">
@@ -37,14 +40,14 @@
                 </thead>
                 <tbody>
                     @foreach (var person in Model.Persons)
-                        {
-                    <tr>
-                        <td><p class="mt-2">@person.Id</p></td>
-                        <td><p class="mt-2">@person.Name</p></td>
-                        <td><p class="mt-2">@person.Age years old</p></td>
-                        <td><a asp-controller="Person" asp-action="View" asp-route-id="@person.Id" class="btn btn-primary">View</a></td>
-                    </tr>
-                        }
+                    {
+                        <tr>
+                            <td><p class="mt-2">@person.Id</p></td>
+                            <td><p class="mt-2">@person.Name</p></td>
+                            <td><p class="mt-2">@person.Age years old</p></td>
+                            <td><a asp-controller="Person" asp-action="View" asp-route-id="@person.Id" class="btn btn-primary">View</a></td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
